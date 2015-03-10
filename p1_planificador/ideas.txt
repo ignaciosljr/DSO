@@ -1,0 +1,66 @@
+Estructuras de datos
+	cola
+	hilo(rodaja*, id,estado,contexto,prioridad,)
+	constantes/(Quantumticks,listo, finalizado,low, high, medium)
+	actual
+
+
+algoritmos
+	interrupcion(
+		actual.rodaja--
+		if (actual.rodaja == 0 || actual.estado == Finalizado)
+			planificador()
+	)
+
+	planificador(
+		if(!cola.isEmpty)
+			TCB anterior = actual
+			deshabilitar_interrupt
+			actual = dequeue()
+			habilitar_interrupt
+			if(anterior.finalizado == 1)
+				setcontext(actual)
+			else
+				swapcontext(anterior,actual)
+				deshabilitar_interrupt
+				enqueue(anterior,&cola)
+				habilitar_interrupt
+		reset-timer(QuantumTicks)
+	)
+
+
+FIFO
+Estructuras de datos
+	colaPrioridadAlta
+	colaPrioridadBaja
+	hilo(rodaja*, id,estado,contexto,prioridad,)
+	constantes/(Quantumticks,listo, finalizado,low, high, medium)
+	actual
+
+
+
+	interrupcion(
+		Sacar el primer hilo()
+		if(actual->prioridad == LOW){
+			
+		}
+		else{
+			if(cola)
+		}
+
+		actual->ticks--;
+	)
+
+
+
+
+
+
+
+
+
+
+
+
+
+*el numero de ticks que le quedan en la rodaja (Q-T)
