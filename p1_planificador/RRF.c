@@ -98,19 +98,14 @@ int mythread_create (void (*fun_addr)(),int priority)
   makecontext(&t_state[i].run_env, fun_addr, 1);  
 
   if(t_state[i].priority==HIGH_PRIORITY){
-    //sleep(5);
     disable_interrupt();
     enqueue(qAlta, &t_state[i]);
     enable_interrupt();
-    // printf("Alta \n");
-    //queue_print(qAlta);
   }
-  else if(t_state[i].priority==LOW_PRIORITY){
+  else if(t_state[i].priority!=HIGH_PRIORITY){
     disable_interrupt();
     enqueue(qBaja, &t_state[i]);
     enable_interrupt();
-     // printf("Baja \n");
-    //queue_print(qBaja);
   }
  
   return i;
@@ -151,13 +146,11 @@ int mythread_gettid(){
 void timer_interrupt(int sig)
 {
   // Si el hilo es de prioridad baja
-  printf("id: %d", mythread_gettid(current));
-  printf ("priority: %d", mythread_getpriority(current));
-  if(actual->priority==LOW_PRIORITY){
-    //printf("Baja prioridad");
+  //printf("id: %d", mythread_gettid(current));
+  //printf ("priority: %d", mythread_getpriority(current));
+  if(actual->priority!=HIGH_PRIORITY){
     actual->ticks--;
-    if(queue_empty(qAlta)==0 || actual->ticks == 0){
-      //printf("Ticks: %d", actual->ticks);
+    if(queue_empty(qAlta) == 0 || actual->ticks == 0){
       actual->ticks = QUANTUM_TICKS;
       scheduler();
     }
@@ -167,6 +160,21 @@ void timer_interrupt(int sig)
 /* Scheduler */
 void scheduler(){
     auxiliar = actual;
+		
+		if(actual->state == FREE){
+				if(queue_empty(qAlta) == 0){
+					//Si hay algo en la cola alta
+					disable_interrupt();
+					actual = dequeue(qAlta);
+					enable_interrupt();
+					current = actual->tid;
+					printf("THREAD <%d> TERMINATED: SETCONTEXT OF <%d>\n",auxiliar->tid,actual->tid);
+					setcontext(&actual->run_env);
+				}else{
+						
+				}
+			}
+		
     //Si ha terminado
     if(actual->state==FREE){
       //si quedan procesos de prioridad alta
@@ -211,6 +219,7 @@ void scheduler(){
       printf("FINISH \n");
       exit(1);
     }
+   
 }
 
 
